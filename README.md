@@ -2,7 +2,7 @@
 A project to test out Json Web Tokens and discoverablility of apis.
 
 ## Getting started development
-Install Auth/dummyCert.pfx as local user. 
+* Install Auth/dummyCert.pfx as local user
 
 ### If you dont know the password to dummyCert.pfx 
 * generate your own cert 

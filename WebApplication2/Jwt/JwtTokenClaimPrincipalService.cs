@@ -8,14 +8,18 @@ namespace WebApplication2.Jwt
     {
         private readonly ISigningKeyRepository _signingKeyRepository;
         private readonly IJwtService _jwtService;
+        private readonly ISigningCredentialRepository _signingCredentialRepository;
 
         public JwtTokenClaimPrincipalService(ISigningKeyRepository signingKeyRepository,
-            IJwtService jwtService)
+            IJwtService jwtService,
+            ISigningCredentialRepository signingCredentialRepository)
         {
             _signingKeyRepository = signingKeyRepository;
             _jwtService = jwtService;
+            _signingCredentialRepository = signingCredentialRepository;
         }
-        public bool TryGetClaimsPrincipal(string token, string signingKeyId, 
+        public bool TryGetClaimsPrincipal(string token, 
+            string signingKeyId, 
             Action<TokenValidationParameters> tokenValidationSetup, 
             out ClaimsPrincipal claimsPrincipal)
         {
@@ -37,6 +41,26 @@ namespace WebApplication2.Jwt
             }
 
             claimsPrincipal = null;
+            return false;
+        }
+
+        public bool TryGetTokenString(ClaimsIdentity claimsIdentity, 
+            string signingKeyId, 
+            Action<SecurityTokenDescriptor> tokenSetup, out string token)
+        {
+            if (_signingCredentialRepository.TryGet(signingKeyId, out var signingCredentials))
+            {
+                var securityTokenDescriptor = new SecurityTokenDescriptor
+                {
+                    SigningCredentials = signingCredentials,
+                    Subject = claimsIdentity
+                };
+                tokenSetup(securityTokenDescriptor);
+                token = _jwtService.CreateToken(securityTokenDescriptor);
+                return true;
+            }
+
+            token = null;
             return false;
         }
     }

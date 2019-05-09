@@ -19,7 +19,7 @@ namespace WebApplication2.Controllers
     {
         private readonly UrlConfig _urlConfig;
         private readonly ITokenClaimPrincipalService _tokenClaimPrincipalService;
-        private const string SigningKeyId = "something";
+        public const string SigningKeyId = "something";
 
         public FirstController(UrlConfig urlConfig,
             ITokenClaimPrincipalService tokenClaimPrincipalService)
@@ -54,7 +54,7 @@ namespace WebApplication2.Controllers
         {
             tokenValidationParameters.ValidAudiences = _urlConfig.ValidAudiences;
             tokenValidationParameters.ValidIssuers = _urlConfig.ValidIssuers;
-            tokenValidationParameters.ValidateLifetime = false;
+            tokenValidationParameters.ValidateLifetime = true;
         }
 
         private bool Invalid(params string[] strings)

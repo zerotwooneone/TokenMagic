@@ -10,5 +10,10 @@ namespace WebApplication2.Jwt
             string signingKeyId, 
             Action<TokenValidationParameters> tokenValidationSetup, 
             out ClaimsPrincipal claimsPrincipal);
+
+        bool TryGetTokenString(ClaimsIdentity claimsIdentity, 
+            string signingKeyId,
+            Action<SecurityTokenDescriptor> tokenSetup,
+            out string token);
     }
 }

@@ -39,7 +39,7 @@ namespace WebApplication2.Pages
             securityTokenDescriptor.Audience = _urlConfig.ValidAudiences.First();
 
             DateTime? notBefore = null;
-            DateTime? expires = DateTime.Now.AddYears(10).ToUniversalTime();
+            DateTime? expires = DateTime.Now.AddYears(10);
             DateTime? issuedAt = null;
 
             securityTokenDescriptor.NotBefore = notBefore;

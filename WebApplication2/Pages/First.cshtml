@@ -1,0 +1,9 @@
+﻿@page "{s1}/{s2?}/{s3?}/{s4?}/{s5?}/{s6?}/{s7?}/{s8?}"
+@model WebApplication2.Pages.FirstModel
+@{
+    ViewData["Title"] = "First";
+}
+
+<h1>First</h1>
+<div style="word-wrap: break-word">@RouteData.Values["s1"]@RouteData.Values["s2"]@RouteData.Values["s3"]@RouteData.Values["s4"]@RouteData.Values["s5"]@RouteData.Values["s6"]@RouteData.Values["s7"]@RouteData.Values["s8"]</div>
+

@@ -31,6 +31,15 @@ namespace WebApplication2
 
             services.AddSingleton<UrlConfig>();
             services.AddJwt();
+
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.MaxValue;
+                options.Cookie.HttpOnly = true;
+                // Make the session cookie essential
+                options.Cookie.IsEssential = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,8 +49,9 @@ namespace WebApplication2
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseStaticFiles();
+            app.UseSession();
             app.UseMvc();
         }
     }

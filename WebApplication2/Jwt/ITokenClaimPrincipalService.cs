@@ -11,8 +11,7 @@ namespace WebApplication2.Jwt
             Action<TokenValidationParameters> tokenValidationSetup, 
             out ClaimsPrincipal claimsPrincipal);
 
-        bool TryGetTokenString(ClaimsIdentity claimsIdentity, 
-            string signingKeyId,
+        bool TryGetTokenString(string signingKeyId,
             Action<SecurityTokenDescriptor> tokenSetup,
             out string token);
     }

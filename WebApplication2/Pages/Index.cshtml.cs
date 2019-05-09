@@ -24,9 +24,7 @@ namespace WebApplication2.Pages
         public string TokenString { get; private set; }
         public void OnGet()
         {
-            var subject = new ClaimsIdentity(new[] { new Claim("type", "value"), });
-
-            _tokenClaimPrincipalService.TryGetTokenString(subject, FirstController.SigningKeyId, TokenSetup, out var encoded);
+            _tokenClaimPrincipalService.TryGetTokenString(FirstController.SigningKeyId, TokenSetup, out var encoded);
 
             var chunks = encoded.Chunk(_urlConfig.MaxUrlChunkSize);
             TokenString  = string.Join("/", chunks) ;
@@ -34,6 +32,9 @@ namespace WebApplication2.Pages
 
         private void TokenSetup(SecurityTokenDescriptor securityTokenDescriptor)
         {
+            var subject = new ClaimsIdentity(new[] { new Claim("type", "value"), });
+            securityTokenDescriptor.Subject = subject;
+
             securityTokenDescriptor.Issuer = _urlConfig.ValidIssuers.First();
             securityTokenDescriptor.Audience = _urlConfig.ValidAudiences.First();
 

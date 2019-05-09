@@ -44,8 +44,7 @@ namespace WebApplication2.Jwt
             return false;
         }
 
-        public bool TryGetTokenString(ClaimsIdentity claimsIdentity, 
-            string signingKeyId, 
+        public bool TryGetTokenString(string signingKeyId, 
             Action<SecurityTokenDescriptor> tokenSetup, out string token)
         {
             if (_signingCredentialRepository.TryGet(signingKeyId, out var signingCredentials))
@@ -53,7 +52,6 @@ namespace WebApplication2.Jwt
                 var securityTokenDescriptor = new SecurityTokenDescriptor
                 {
                     SigningCredentials = signingCredentials,
-                    Subject = claimsIdentity
                 };
                 tokenSetup(securityTokenDescriptor);
                 token = _jwtService.CreateToken(securityTokenDescriptor);

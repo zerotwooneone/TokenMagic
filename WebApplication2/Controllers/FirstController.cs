@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using WebApplication2.Jwt;
 using WebApplication2.Pages;
 using WebApplication2.Url;
 
@@ -15,10 +18,14 @@ namespace WebApplication2.Controllers
     public class FirstController : ControllerBase
     {
         private readonly UrlConfig _urlConfig;
+        private readonly ITokenClaimPrincipalService _tokenClaimPrincipalService;
+        private const string SigningKeyId = "something";
 
-        public FirstController(UrlConfig urlConfig)
+        public FirstController(UrlConfig urlConfig,
+            ITokenClaimPrincipalService tokenClaimPrincipalService)
         {
             _urlConfig = urlConfig;
+            _tokenClaimPrincipalService = tokenClaimPrincipalService;
         }
 
         [HttpGet("{s1}/{s2?}/{s3?}/{s4?}/{s5?}/{s6?}/{s7?}/{s8?}")]
@@ -27,7 +34,7 @@ namespace WebApplication2.Controllers
         {
             if (Invalid(s1,s2,s3,s4,s5,s6,s7,s8))
             {
-                return BadRequest(new {message = "something"});
+                return BadRequest();
             }
 
             var sArray = new[] {s1, s2, s3, s4, s5, s6, s7, s8};
@@ -35,7 +42,19 @@ namespace WebApplication2.Controllers
 
             var possibleToken = string.Join("", sEnum);
 
+            if (!_tokenClaimPrincipalService.TryGetClaimsPrincipal(possibleToken, SigningKeyId, TokenValidationSetup, out var claimsPrincipal))
+            {
+                return BadRequest();
+            }
+
             return Ok();
+        }
+
+        private void TokenValidationSetup(TokenValidationParameters tokenValidationParameters)
+        {
+            tokenValidationParameters.ValidAudiences = _urlConfig.ValidAudiences;
+            tokenValidationParameters.ValidIssuers = _urlConfig.ValidIssuers;
+            tokenValidationParameters.ValidateLifetime = false;
         }
 
         private bool Invalid(params string[] strings)

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using WebApplication2.Jwt;
 using WebApplication2.Pages;
 using WebApplication2.Url;
 
@@ -29,6 +30,7 @@ namespace WebApplication2
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSingleton<UrlConfig>();
+            services.AddJwt();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

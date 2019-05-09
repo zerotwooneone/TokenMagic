@@ -7,6 +7,7 @@ using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.IdentityModel.Tokens;
+using WebApplication2.Jwt;
 using WebApplication2.System;
 using WebApplication2.Url;
 
@@ -25,7 +26,7 @@ namespace WebApplication2.Pages
         {
             var xs = new X509Store(StoreName.My, StoreLocation.LocalMachine);
             const string rawThumbprint = "a4c3c6297910143307cd26a4704f0ec6ff7b75b1";
-            string thumbprint = SanitizeThumbPrint(rawThumbprint);
+            string thumbprint = DummySigningCredentialRepository.SanitizeThumbPrint(rawThumbprint);
             X509Certificate2 cert;
             try
             {
@@ -72,9 +73,6 @@ namespace WebApplication2.Pages
             TokenString  = string.Join("/", chunks) ;
         }
 
-        public string SanitizeThumbPrint(string thumbprint)
-        {
-            return Regex.Replace(thumbprint, @"[^\da-fA-F]", string.Empty).ToUpper();
-        }
+        
     }
 }

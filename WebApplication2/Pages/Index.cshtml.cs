@@ -1,15 +1,26 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.IdentityModel.Tokens;
+using WebApplication2.System;
+using WebApplication2.Url;
 
 namespace WebApplication2.Pages
 {
     public class IndexModel : PageModel
     {
+        private readonly UrlConfig _urlConfig;
+
+        public IndexModel(UrlConfig urlConfig)
+        {
+            _urlConfig = urlConfig;
+        }
+        public string TokenString { get; private set; }
         public void OnGet()
         {
             var xs = new X509Store(StoreName.My, StoreLocation.LocalMachine);
@@ -56,7 +67,9 @@ namespace WebApplication2.Pages
             };
 
             var encoded =
-                s.CreateEncodedJwt(tokenDesc); 
+                s.CreateEncodedJwt(tokenDesc);
+            var chunks = encoded.Chunk(_urlConfig.MaxUrlChunkSize);
+            TokenString  = string.Join("/", chunks) ;
         }
 
         public string SanitizeThumbPrint(string thumbprint)

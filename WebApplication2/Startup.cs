@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using WebApplication2.Pages;
+using WebApplication2.Url;
 
 namespace WebApplication2
 {
@@ -25,6 +27,8 @@ namespace WebApplication2
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddSingleton<UrlConfig>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

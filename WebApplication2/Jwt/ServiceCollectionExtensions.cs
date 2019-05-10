@@ -10,21 +10,24 @@ namespace WebApplication2.Jwt
 
         public static IServiceCollection AddJwt(this IServiceCollection serviceCollection)
         {
-            var jwtSecurityTokenHandler = new Lazy<JwtSecurityTokenHandler>(() =>
-            {
-                return new JwtSecurityTokenHandler();
-            });
             serviceCollection
                 .TryAddSingleton<IJwtService>(sp =>
                 {
-                    return new JwtTokenHandlerWrapper(jwtSecurityTokenHandler.Value);
+                    JwtSecurityTokenHandler JwtSecurityTokenHandlerFactory()
+                    {
+                        return new JwtSecurityTokenHandler();
+                    }
+
+                    return new JwtTokenHandlerWrapper(JwtSecurityTokenHandlerFactory);
                 });
             serviceCollection
-                .TryAddSingleton<ISigningCredentialRepository, DummySigningCredentialRepository>();
+                .TryAddSingleton<ISigningCredentialRepository, X509Repository>();
             serviceCollection
-                .TryAddSingleton<ISigningKeyRepository, DummySigningCredentialRepository>();
+                .TryAddSingleton<ISecurityKeyRepository, X509Repository>();
             serviceCollection
-                .TryAddSingleton<ITokenClaimPrincipalService, JwtTokenClaimPrincipalService>();
+                .TryAddSingleton<TokenValidationParameterFactory>();
+            serviceCollection
+                .TryAddSingleton<SecurityTokenDescriptorFactory>();
             
             return serviceCollection;
         }

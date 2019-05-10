@@ -5,14 +5,12 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace WebApplication2.Jwt
 {
-    [Obsolete("This is meant for development only")]
-    public class DummySigningCredentialRepository : ISigningCredentialRepository, ISigningKeyRepository
+    public class X509Repository : ISigningCredentialRepository, ISecurityKeyRepository
     {
-        private static readonly string Thumbprint = SanitizeThumbPrint("a4c3c6297910143307cd26a4704f0ec6ff7b75b1");
-
         public bool TryGet(string id, out SigningCredentials signingCredentials)
         {
-            var cert = GetCertificate(Thumbprint);
+            var sanitized = SanitizeThumbPrint(id);
+            var cert = GetCertificate(sanitized);
 
             var x509SigningCredentials = new X509SigningCredentials(cert);
             signingCredentials = x509SigningCredentials;
@@ -50,7 +48,8 @@ namespace WebApplication2.Jwt
 
         public bool TryGet(string id, out SecurityKey securityKey)
         {
-            var cert = GetCertificate(Thumbprint);
+            var sanitized = SanitizeThumbPrint(id);
+            var cert = GetCertificate(sanitized);
             securityKey = new X509SecurityKey(cert);
             return true;
         }

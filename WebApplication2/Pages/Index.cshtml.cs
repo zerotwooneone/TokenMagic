@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.IdentityModel.Tokens;
@@ -13,38 +13,33 @@ namespace WebApplication2.Pages
     public class IndexModel : PageModel
     {
         private readonly UrlConfig _urlConfig;
-        private readonly ITokenClaimPrincipalService _tokenClaimPrincipalService;
+        private readonly IJwtService _tokenClaimPrincipalService;
+        private readonly SecurityTokenDescriptorFactory _securityTokenDescriptorFactory;
 
         public IndexModel(UrlConfig urlConfig,
-            ITokenClaimPrincipalService tokenClaimPrincipalService)
+            IJwtService tokenClaimPrincipalService,
+            SecurityTokenDescriptorFactory securityTokenDescriptorFactory)
         {
             _urlConfig = urlConfig;
             _tokenClaimPrincipalService = tokenClaimPrincipalService;
+            _securityTokenDescriptorFactory = securityTokenDescriptorFactory;
         }
         public string TokenString { get; private set; }
         public void OnGet()
         {
-            _tokenClaimPrincipalService.TryGetTokenString(FirstController.SigningKeyId, TokenSetup, out var encoded);
+            void HandlerSetup(JwtSecurityTokenHandler jwtSecurityTokenHandler)
+            {
+                jwtSecurityTokenHandler.SetDefaultTimesOnTokenCreation = true;
+            }
+
+            var securityTokenDescriptor = _securityTokenDescriptorFactory.GetDefaultSecurityTokenDescriptor();
+
+            SecurityTokenDescriptorFactory.SetupUrlConfig(securityTokenDescriptor, _urlConfig);
+
+            var encoded =_tokenClaimPrincipalService.CreateToken(securityTokenDescriptor, HandlerSetup);
 
             var chunks = encoded.Chunk(_urlConfig.MaxUrlChunkSize);
             TokenString  = string.Join("/", chunks) ;
-        }
-
-        private void TokenSetup(SecurityTokenDescriptor securityTokenDescriptor)
-        {
-            var subject = new ClaimsIdentity(new[] { new Claim("type", "value"), });
-            securityTokenDescriptor.Subject = subject;
-
-            securityTokenDescriptor.Issuer = _urlConfig.ValidIssuers.First();
-            securityTokenDescriptor.Audience = _urlConfig.ValidAudiences.First();
-
-            DateTime? notBefore = null;
-            DateTime? expires = DateTime.Now.AddYears(10);
-            DateTime? issuedAt = null;
-
-            securityTokenDescriptor.NotBefore = notBefore;
-            securityTokenDescriptor.Expires = expires;
-            securityTokenDescriptor.IssuedAt = issuedAt;
         }
     }
 }

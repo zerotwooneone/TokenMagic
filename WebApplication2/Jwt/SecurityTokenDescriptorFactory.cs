@@ -37,6 +37,20 @@ namespace WebApplication2.Jwt
             return securityTokenDescriptor;
         }
 
+        public virtual SecurityTokenDescriptor GetApplicationTokenDescriptor()
+        {
+            var securityTokenDescriptor = new SecurityTokenDescriptor();
+
+            _signingCredentialRepository.TryGet("a4c3c6297910143307cd26a4704f0ec6ff7b75b1", out var signingCredentials);
+
+            securityTokenDescriptor.SigningCredentials = signingCredentials;
+
+            var subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Role, "nothing"), });
+            securityTokenDescriptor.Subject = subject;
+
+            return securityTokenDescriptor;
+        }
+
         public static void SetupUrlConfig(SecurityTokenDescriptor securityTokenDescriptor, UrlConfig urlConfig)
         {
             securityTokenDescriptor.Issuer = urlConfig.ValidIssuers.First();

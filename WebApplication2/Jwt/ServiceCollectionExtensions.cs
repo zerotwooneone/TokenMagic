@@ -1,5 +1,4 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -28,6 +27,8 @@ namespace WebApplication2.Jwt
                 .TryAddSingleton<TokenValidationParameterFactory>();
             serviceCollection
                 .TryAddSingleton<SecurityTokenDescriptorFactory>();
+            serviceCollection
+                .TryAddSingleton<AppConfigService>();
             
             return serviceCollection;
         }

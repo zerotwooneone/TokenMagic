@@ -13,15 +13,15 @@ namespace WebApplication2.Pages
     public class IndexModel : PageModel
     {
         private readonly UrlConfig _urlConfig;
-        private readonly IJwtService _tokenClaimPrincipalService;
+        private readonly IJwtService _jwtService;
         private readonly SecurityTokenDescriptorFactory _securityTokenDescriptorFactory;
 
         public IndexModel(UrlConfig urlConfig,
-            IJwtService tokenClaimPrincipalService,
+            IJwtService jwtService,
             SecurityTokenDescriptorFactory securityTokenDescriptorFactory)
         {
             _urlConfig = urlConfig;
-            _tokenClaimPrincipalService = tokenClaimPrincipalService;
+            _jwtService = jwtService;
             _securityTokenDescriptorFactory = securityTokenDescriptorFactory;
         }
         public string TokenString { get; private set; }
@@ -36,7 +36,7 @@ namespace WebApplication2.Pages
 
             SecurityTokenDescriptorFactory.SetupUrlConfig(securityTokenDescriptor, _urlConfig);
 
-            var encoded =_tokenClaimPrincipalService.CreateToken(securityTokenDescriptor, HandlerSetup);
+            var encoded =_jwtService.CreateToken(securityTokenDescriptor, HandlerSetup);
 
             var chunks = encoded.Chunk(_urlConfig.MaxUrlChunkSize);
             TokenString  = string.Join("/", chunks) ;

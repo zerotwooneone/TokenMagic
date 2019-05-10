@@ -2,7 +2,7 @@
 
 namespace WebApplication2.Jwt
 {
-    public interface ISigningKeyRepository
+    public interface ISecurityKeyRepository
     {
         bool TryGet(string id, out SecurityKey securityKey);
     }
